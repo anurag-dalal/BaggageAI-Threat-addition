@@ -106,6 +106,7 @@ def place_threat(background, threat, x=0, y=0):
     return background
 
 
+## ----CONFIGS----
 # location of threat images and background images
 threat_path = 'threat_images/'
 background_path = 'background_images/'
@@ -114,14 +115,16 @@ rotate_angle = 45
 # threshold level for white
 lower_white = np.array([245,245,245])  
 upper_white = np.array([255,255,255])
+# percent factor for resizing threat
+percent_factor = 0.4
+
+
 # reading all files from location
 threats, num_threats = read_images(threat_path)
 backgrounds, num_background = read_images(background_path)
 n = 0
 for image in threats:
     image_copy = np.copy(image)
-    image_copy = cv2.cvtColor(image_copy, cv2.COLOR_BGR2RGB)
-    image = np.copy(image_copy)
     kernelmatrix = np.ones((5, 5), np.uint8)
     image_copy = cv2.dilate(image_copy, kernelmatrix)
     # defining the mask
@@ -138,7 +141,7 @@ for image in threats:
     
     for background in backgrounds:
         temp = np.copy(background)
-        rotated = autoscaler(temp, rotated)
+        rotated = autoscaler(temp, rotated, percent_factor=percent_factor)
         (h, w) = rotated.shape[:2]
         x,y = get_xy(temp)
         x = x-h//2
